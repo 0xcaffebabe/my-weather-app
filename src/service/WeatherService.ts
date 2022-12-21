@@ -1,168 +1,78 @@
 import axios from "axios";
+import DailyForecastItem from "../dto/DailyForecastItem";
 import Weather from "../dto/Weather";
-
-let weatherMap = [
-  {
-    "code": 0,
-    "wea": "晴"
-  },
-  {
-    "code": 1,
-    "wea": "多云"
-  },
-  {
-    "code": 2,
-    "wea": "阴"
-  },
-  {
-    "code": 3,
-    "wea": "阵雨"
-  },
-  {
-    "code": 4,
-    "wea": "雷阵雨"
-  },
-  {
-    "code": 5,
-    "wea": "雷阵雨并伴有冰雹"
-  },
-  {
-    "code": 6,
-    "wea": "雨夹雪"
-  },
-  {
-    "code": 7,
-    "wea": "小雨"
-  },
-  {
-    "code": 8,
-    "wea": "中雨"
-  },
-  {
-    "code": 9,
-    "wea": "大雨"
-  },
-  {
-    "code": 10,
-    "wea": "暴雨"
-  },
-  {
-    "code": 11,
-    "wea": "大暴雨"
-  },
-  {
-    "code": 12,
-    "wea": "特大暴雨"
-  },
-  {
-    "code": 13,
-    "wea": "阵雪"
-  },
-  {
-    "code": 14,
-    "wea": "小雪"
-  },
-  {
-    "code": 15,
-    "wea": "中雪"
-  },
-  {
-    "code": 16,
-    "wea": "大雪"
-  },
-  {
-    "code": 17,
-    "wea": "暴雪"
-  },
-  {
-    "code": 18,
-    "wea": "雾"
-  },
-  {
-    "code": 19,
-    "wea": "冻雨"
-  },
-  {
-    "code": 20,
-    "wea": "沙尘暴"
-  },
-  {
-    "code": 21,
-    "wea": "小雨-中雨"
-  },
-  {
-    "code": 22,
-    "wea": "中雨-大雨"
-  },
-  {
-    "code": 23,
-    "wea": "大雨-暴雨"
-  },
-  {
-    "code": 24,
-    "wea": "暴雨-大暴雨"
-  },
-  {
-    "code": 25,
-    "wea": "大暴雨-特大暴雨"
-  },
-  {
-    "code": 26,
-    "wea": "小雪-中雪"
-  },
-  {
-    "code": 27,
-    "wea": "中雪-大雪"
-  },
-  {
-    "code": 28,
-    "wea": "大雪-暴雪"
-  },
-  {
-    "code": 29,
-    "wea": "浮沉"
-  },
-  {
-    "code": 30,
-    "wea": "扬沙"
-  },
-  {
-    "code": 31,
-    "wea": "强沙尘暴"
-  },
-  {
-    "code": 32,
-    "wea": "飑"
-  },
-  {
-    "code": 33,
-    "wea": "龙卷风"
-  },
-  {
-    "code": 34,
-    "wea": "若高吹雪"
-  },
-  {
-    "code": 35,
-    "wea": "轻雾"
-  },
-  {
-    "code": 53,
-    "wea": "霾"
-  },
-  {
-    "code": 99,
-    "wea": "未知"
-  }
-]
-
+import WeatherUtils from "../util/WeatherUtils";
+import dayjs from 'dayjs'
+import HourlyForecastItem from "../dto/HourlyForecastItem";
+import HourlyWeatherRangeItem from "../dto/HourlyWeatherRangeItem";
 
 export default class WeatherService {
+  private static instance: WeatherService
+  private cache: Weather | null = null;
+
+  private constructor() {}
+
+  public static newInstance(): WeatherService {
+    return this.instance || (this.instance = new WeatherService())
+  }
 
   public async getWeather(): Promise<Weather> {
+    if (this.cache) {
+      return this.cache
+    }
     const resp = await axios.get("https://weather-api.ismy.wang/wtr-v3/weather/all?longitude=118.636286&latitude=24.874194&locale=zh_cn&isGlobal=false&appKey=weather20151024&sign=zUFJoAR2ZVrDy1vF3D07")
     const weather = resp.data as Weather
-    weather.current.weather = weatherMap.find(v => v.code + '' === weather.current.weather)?.wea || '未知'
+    weather.current.weather = WeatherUtils.weatherCode2Str(weather.current.weather)
+    this.cache = weather
     return weather
+  }
+
+  public getDailyForecast(weather: Weather | null): DailyForecastItem[] {
+    if (!weather) {
+      return []
+    }
+    const forecast = weather.forecastDaily
+    return forecast.weather.value.map((_, i) => {
+      return {
+        date: dayjs().add(i, 'day').format("MM-DD"),
+        weatherFrom: WeatherUtils.weatherCode2Str(forecast.weather.value[i].from),
+        weatherTo: WeatherUtils.weatherCode2Str(forecast.weather.value[i].to),
+        tempFrom: forecast.temperature.value[i].from,
+        tempTo: forecast.temperature.value[i].to
+      } as DailyForecastItem
+    })
+  }
+
+  public getHourlyForecast(weather: Weather | null) : HourlyForecastItem[] {
+    if (!weather) {
+      return []
+    }
+    return weather.forecastHourly
+      .weather.value.map((_, i) => {
+        return {
+          time: dayjs().set("minute", 0).add(i, 'hour').format("HH:mm"),
+          weather: WeatherUtils.weatherCode2Str(weather.forecastHourly.weather.value[i] + ''),
+          temp: weather.forecastHourly.temperature.value[i] + '',
+        } as HourlyForecastItem
+      })
+  }
+
+  public calcHourlyWeahterRange(forecast: HourlyForecastItem[]): HourlyWeatherRangeItem[] {
+    const result: HourlyWeatherRangeItem[] = []
+    const colors = ['rgba(255, 173, 177, 0.4)', 'rgba(125, 137, 177, 0.4)']
+    let cnt = 0
+    console.log(forecast)
+    for(let f of forecast) {
+      if (result.length === 0 || result[result.length - 1].weather !== f.weather) {
+        if (result.length !== 0) {
+          result[result.length - 1].endTime = f.time  
+        }
+        result.push({weather: f.weather, startTime: f.time, endTime: dayjs(f.time).add(1, 'hour').format("HH:mm"), color: colors[(cnt++ % 2)]})
+      } else {
+        result[result.length - 1].endTime = f.time
+      }
+    }
+    console.log(result)
+    return result;
   }
 }

@@ -1,25 +1,33 @@
 import React, { useState } from 'react';
 import './App.css';
+import Weather from './dto/Weather';
 import WeatherService from './service/WeatherService';
+import DailyForecast from './view/component/DailyForecast';
+import TodaySummary from './view/component/TodaySummary';
+import {Row, Col} from 'antd'
+import HourlyForecast from './view/component/HourlyForecast';
 
-const weatherService = new WeatherService()
+const weatherService = WeatherService.newInstance()
 
 function App() {
-  const [temp, setTemp] = useState("0")
-  const [weather, setWeather] = useState("未知")
+  const [weather, setWeather] = useState<Weather | null>(null)
   weatherService.getWeather().then(weat => {
-    setTemp(weat.current.temperature.value)
-    setWeather(weat.current.weather)
+    setWeather(weat)
   })
 
   return (
     <div className="App">
-      <div>
-        当前温度 {temp}
-      </div>
-      <div>
-        当前天气 {weather}
-      </div>
+      <Row>
+        <Col md={8} xs={24}>
+          <TodaySummary weather={weather} />
+        </Col>
+        <Col md={16} xs={24}>
+          <DailyForecast weather={weather}/>
+        </Col>
+        <Col span={24}>
+          <HourlyForecast weather={weather}/>
+        </Col>
+      </Row>
     </div>
   );
 }
