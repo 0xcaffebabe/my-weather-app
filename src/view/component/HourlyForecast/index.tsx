@@ -113,7 +113,7 @@ function HourlyForecast(props: { weather: Weather | null }) {
     initChart(props.weather)
   })
   return (
-    <div>
+    <div className={styles.chartWrapper}>
       <div id='hourlyForecast' className={styles.hourlyForecast}></div>
     </div>
   )

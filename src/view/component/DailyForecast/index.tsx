@@ -13,7 +13,9 @@ function DailyForecast(props: { weather: Weather | null }) {
         {forecast.map(v =>
           <Row>
             <Col span={6}>{v.date}</Col>
-            <Col span={6}>{v.weatherFrom} 转 {v.weatherTo}</Col>
+            <Col span={6}>
+              <img width={32} height={32} src={'./weather/' + v.weatherFrom + '.svg'} alt="" /> / <img width={32} height={32} src={'./weather/' + v.weatherTo + '.svg'} alt="" />
+            </Col>
             <Col span={12}>{v.tempFrom}℃ ~ {v.tempTo}℃</Col>
           </Row>
         )}

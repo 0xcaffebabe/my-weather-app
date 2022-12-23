@@ -3,6 +3,7 @@
   display: inline-block;
   font-size: 15vh;
   position: relative;
+  line-height: 15vh;
 }
 .tempUnit {
   position: absolute;
