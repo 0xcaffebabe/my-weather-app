@@ -31,7 +31,7 @@ export default class WeatherService {
     const forecast = weather.forecastDaily
     return forecast.weather.value.map((_, i) => {
       return {
-        date: dayjs().add(i + 1, 'day').format("MM-DD"),
+        date: dayjs().add(i, 'day').format("MM-DD"),
         weatherFrom: WeatherUtils.weatherCode2Str(forecast.weather.value[i].from),
         weatherTo: WeatherUtils.weatherCode2Str(forecast.weather.value[i].to),
         tempFrom: forecast.temperature.value[i].from,
