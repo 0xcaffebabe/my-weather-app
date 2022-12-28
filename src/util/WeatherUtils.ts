@@ -1,27 +1,33 @@
 let weatherMap = [
   {
     "code": 0,
-    "wea": "晴"
+    "wea": "晴",
+    color: ['#197fd6', '#6da6e4']
   },
   {
     "code": 1,
-    "wea": "多云"
+    "wea": "多云",
+    color: ['#477ead', '#5280b1']
   },
   {
     "code": 2,
-    "wea": "阴"
+    "wea": "阴",
+    color: ['#25272b', '#667f9b']
   },
   {
     "code": 3,
-    "wea": "阵雨"
+    "wea": "阵雨",
+    color: ['#477ead', '#414449']
   },
   {
     "code": 4,
-    "wea": "雷阵雨"
+    "wea": "雷阵雨",
+    color: ['#477ead', '#707377']
   },
   {
     "code": 5,
-    "wea": "雷阵雨并伴有冰雹"
+    "wea": "雷阵雨并伴有冰雹",
+    color: ['#477ead', '#707377']
   },
   {
     "code": 6,
@@ -29,27 +35,33 @@ let weatherMap = [
   },
   {
     "code": 7,
-    "wea": "小雨"
+    "wea": "小雨",
+    color: ['#253a50', '#529ada']
   },
   {
     "code": 8,
-    "wea": "中雨"
+    "wea": "中雨",
+    color: ['#172533', '#529ada']
   },
   {
     "code": 9,
-    "wea": "大雨"
+    "wea": "大雨",
+    color: ['#0d151d', '#204464']
   },
   {
     "code": 10,
-    "wea": "暴雨"
+    "wea": "暴雨",
+    color: ['#080d13', '#0f263a']
   },
   {
     "code": 11,
-    "wea": "大暴雨"
+    "wea": "大暴雨",
+    color: ['#080d13', '#0f263a']
   },
   {
     "code": 12,
-    "wea": "特大暴雨"
+    "wea": "特大暴雨",
+    color: ['#080d13', '#0f263a']
   },
   {
     "code": 13,
@@ -73,7 +85,8 @@ let weatherMap = [
   },
   {
     "code": 18,
-    "wea": "雾"
+    "wea": "雾",
+    color: ['#80848b', '#667f9b']
   },
   {
     "code": 19,
@@ -157,7 +170,16 @@ function weatherCode2Str(code: string | number): string {
   return weatherMap.find(v => v.code + '' === code)?.wea || '未知'
 }
 
+function weatherCode2Color(code: string | number): [string, string] {
+  const color = weatherMap.find(v => v.code + '' === code)?.color
+  if (color) {
+    return [color[0], color[1]]
+  }
+  return ['#197fd6', '#6da6e4']
+}
+
 
 export default {
-  weatherCode2Str
+  weatherCode2Str,
+  weatherCode2Color
 }

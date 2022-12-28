@@ -3,8 +3,8 @@
   overflow-x: auto;
 }
 .hourlyForecast {
-  width: max(100%, 600px);
-  padding-left: 20px;
-  padding-right: 20px;
-  height: 400px;
+  width: max(100%, 800px);
+  /* padding-left: 20px;
+  padding-right: 20px; */
+  height: min(60vh, 600px);
 }

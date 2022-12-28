@@ -16,11 +16,8 @@ export default class WeatherService {
     return this.instance || (this.instance = new WeatherService())
   }
 
-  public async getWeather(): Promise<Weather> {
-    // if (this.cache) {
-    //   return this.cache
-    // }
-    const resp = await axios.get("https://weather-api.ismy.wang/wtr-v3/weather/all?longitude=118.636286&latitude=24.874194&locale=zh_cn&isGlobal=false&appKey=weather20151024&sign=zUFJoAR2ZVrDy1vF3D07")
+  public async getWeather(longtitude: string, latitude: string): Promise<Weather> {
+    const resp = await axios.get(`https://weather-api.ismy.wang/wtr-v3/weather/all?longitude=${longtitude}&latitude=${latitude}&locale=zh_cn&isGlobal=false&appKey=weather20151024&sign=zUFJoAR2ZVrDy1vF3D07`)
     const weather = resp.data as Weather
     weather.current.weather = WeatherUtils.weatherCode2Str(weather.current.weather)
     this.cache = weather
