@@ -31,7 +31,7 @@ export default class WeatherService {
     const forecast = weather.forecastDaily
     return forecast.weather.value.map((_, i) => {
       return {
-        date: dayjs().add(i, 'day').format("MM-DD"),
+        date: dayjs().add(i + 1, 'day').format("MM-DD"),
         weatherFrom: WeatherUtils.weatherCode2Str(forecast.weather.value[i].from),
         weatherTo: WeatherUtils.weatherCode2Str(forecast.weather.value[i].to),
         tempFrom: forecast.temperature.value[i].from,
@@ -47,7 +47,7 @@ export default class WeatherService {
     return weather.forecastHourly
       .weather.value.map((_, i) => {
         return {
-          time: dayjs().set("minute", 0).add(i, 'hour').format("HH:mm"),
+          time: dayjs().set("minute", 0).add(i + 1, 'hour').format("HH:mm"),
           weather: WeatherUtils.weatherCode2Str(weather.forecastHourly.weather.value[i] + ''),
           temp: weather.forecastHourly.temperature.value[i] + '',
         } as HourlyForecastItem
@@ -58,7 +58,6 @@ export default class WeatherService {
     const result: HourlyWeatherRangeItem[] = []
     const colors = ['rgba(255, 173, 177, 0.4)', 'rgba(125, 137, 177, 0.4)']
     let cnt = 0
-    console.log(forecast)
     for(let f of forecast) {
       if (result.length === 0 || result[result.length - 1].weather !== f.weather) {
         if (result.length !== 0) {
@@ -69,7 +68,6 @@ export default class WeatherService {
         result[result.length - 1].endTime = f.time
       }
     }
-    console.log(result)
     return result;
   }
 }
