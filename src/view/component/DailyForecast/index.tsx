@@ -11,7 +11,7 @@ function DailyForecast(props: { weather: Weather | null }) {
     <div className={styles.dailyForecast}>
       <div>
         {forecast.map(v =>
-          <Row>
+          <Row key={v.date}>
             <Col span={6}>{v.date}</Col>
             <Col span={6}>
               <img width={32} height={32} src={'./weather/' + v.weatherFrom + '.svg'} alt="" /> / <img width={32} height={32} src={'./weather/' + v.weatherTo + '.svg'} alt="" />

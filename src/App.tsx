@@ -4,7 +4,7 @@ import Weather from './dto/Weather';
 import WeatherService from './service/WeatherService';
 import DailyForecast from './view/component/DailyForecast';
 import TodaySummary from './view/component/TodaySummary';
-import { Row, Col, Spin,message  } from 'antd'
+import { Row, Col, Spin,message, Popover  } from 'antd'
 import HourlyForecast from './view/component/HourlyForecast';
 import RainFallForecast from './view/component/RainFallForecast';
 import TouchUtils from './util/TouchUtils';
@@ -12,6 +12,7 @@ import WeatherUtils from './util/WeatherUtils';
 import LocationService from './service/LocationService';
 import LocationUtils from './util/LocationUtils';
 import Alerts from './view/component/Alerts';
+import Map from './view/component/Map';
 
 const weatherService = WeatherService.newInstance()
 const locationService = LocationService.newInstance()
@@ -26,6 +27,7 @@ function App() {
   const [weather, setWeather] = useState<Weather | null>(null)
   const [address, setAddress] = useState('')
   const [loading, setLoading] = useState(true)
+  const [location, setLocation] = useState<[number,number]>([118.636286,24.874194])
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -33,14 +35,13 @@ function App() {
     try {
       const pos = await getPosition()
       const coord = LocationUtils.wgs84togcj02(pos.coords.longitude, pos.coords.latitude)
+      setLocation([coord[0], coord[1]])
       return [coord[0], coord[1]]
     }catch(e) {
       messageApi.error((e as GeolocationPositionError).message)
     }
     return [118.636286,24.874194]
   }
-
-  // getLocation()
 
   const updateBackground = (weat: Weather) => {
     const color = WeatherUtils.weatherCode2Color(weat.current.weather)
@@ -102,7 +103,10 @@ function App() {
   return (
     <div className="App" id="app">
       {contextHolder}
-      <div>{address}</div>
+      <Popover content={(<Map location={location}/>)}>
+        <div>{address}</div>
+      </Popover>
+      
       {template()}
     </div>
   );

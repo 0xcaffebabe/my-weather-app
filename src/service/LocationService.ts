@@ -46,27 +46,31 @@ interface LocationResult {
 
 export default class LocationService {
 
-  private static instance: LocationService
+	private static instance: LocationService
 	private cache: Map<string, string> = new Map<string, string>()
 
-  private constructor() {}
+	private constructor() { }
 
-  public static newInstance(): LocationService {
-    return this.instance || (this.instance = new LocationService())
-  }
+	public static newInstance(): LocationService {
+		return this.instance || (this.instance = new LocationService())
+	}
 
-  public async location2Address(longtitude: string, latitude: string) : Promise<string> {
+	public async location2Address(longtitude: string, latitude: string): Promise<string> {
 		const key = `${longtitude},${latitude}`
 		if (this.cache.has(key)) {
 			return this.cache.get(key)!
 		}
-    const resp = await axios.get(`https://restapi.amap.com/v3/geocode/regeo?key=696d4de11b128b12bac4eeacc6d97fbc&location=${longtitude},${latitude}`)
-    const result = resp.data as LocationResult
-    const address = result.regeocode.formatted_address
-												.replaceAll(result.regeocode.addressComponent.province, '')
-												.replaceAll(result.regeocode.addressComponent.city, '')
-												.replaceAll(result.regeocode.addressComponent.district, '')
+		const resp = await axios.get(`https://restapi.amap.com/v3/geocode/regeo?key=696d4de11b128b12bac4eeacc6d97fbc&location=${longtitude},${latitude}`)
+		const result = resp.data as LocationResult
+		let address = result.regeocode.formatted_address
+		if (result.regeocode.formatted_address.length === 0) {
+			address = '未知'
+		}
+		address = address
+			.replace(result.regeocode.addressComponent.province, '')
+			.replace(result.regeocode.addressComponent.city, '')
+			.replace(result.regeocode.addressComponent.district, '')
 		this.cache.set(key, address)
 		return address
-  }
+	}
 }
