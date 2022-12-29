@@ -90,7 +90,7 @@ function App() {
             <DailyForecast weather={weather} />
           </Col>
           <Col span={24}>
-            <RainFallForecast weather={weather} />
+            <RainFallForecast weather={weather} location={location} />
           </Col>
           <Col span={24}>
             <HourlyForecast weather={weather} />

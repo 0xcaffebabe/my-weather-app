@@ -6,6 +6,7 @@ import { LineChart, LineSeriesOption } from 'echarts/charts';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useEffect } from "react";
+import { Popover } from "antd";
 
 echarts.use([GridComponent, LineChart, CanvasRenderer, UniversalTransition, TitleComponent]);
 
@@ -56,7 +57,7 @@ function initChart(weat: Weather | null) {
   option && myChart.setOption(option);
 }
 
-function RainFallForecast(props: { weather: Weather | null }) {
+function RainFallForecast(props: { weather: Weather | null, location: [number, number] }) {
 
   const allZero = !props.weather?.minutely?.precipitation.value.some(v => v !== 0)
   useEffect(() => {
@@ -75,7 +76,9 @@ function RainFallForecast(props: { weather: Weather | null }) {
 
   return (
     <div>
-      <p>{props.weather?.minutely?.precipitation.description}</p>
+      <Popover content={(<iframe title="天气云图" src='https://caiyunapp.com/share/index.html' style={{height: window.innerHeight - 100 + 'px', width: window.innerWidth - 40 + 'px'}} />)} trigger="click">
+        <p>{props.weather?.minutely?.precipitation.description}</p>
+      </Popover>
       {chartTemplate()}
     </div>
   )
