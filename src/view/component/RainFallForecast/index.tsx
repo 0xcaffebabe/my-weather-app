@@ -34,7 +34,7 @@ function initChart(weat: Weather | null) {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: weat?.minutely.precipitation.value.map((_, i) => i + '')
+      data: weat?.minutely?.precipitation.value.map((_, i) => i + '')
     },
     tooltip: {
       trigger: 'axis'
@@ -45,7 +45,7 @@ function initChart(weat: Weather | null) {
     },
     series: [
       {
-        data: weat?.minutely.precipitation.value.map(v => v * 100),
+        data: weat?.minutely?.precipitation.value.map(v => v * 100),
         type: 'line',
         smooth: true,
         areaStyle: {}
@@ -58,8 +58,7 @@ function initChart(weat: Weather | null) {
 
 function RainFallForecast(props: { weather: Weather | null }) {
 
-  const allZero = !props.weather?.minutely.precipitation.value.some(v => v !== 0)
-  console.log(allZero)
+  const allZero = !props.weather?.minutely?.precipitation.value.some(v => v !== 0)
   useEffect(() => {
     if (!allZero) {
       initChart(props.weather)
