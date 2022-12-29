@@ -148,7 +148,23 @@ export default interface Weather {
 		pubTime: string
 		status: number
 	}
-	alerts: Array<any>
+	alerts: Array< {
+    locationKey: string
+    alertId: string
+    pubTime: string
+    title: string
+    type: string
+    level: string
+    detail: string
+    images: {
+      icon: string
+      notice: string
+    }
+    defense: Array< {
+      defenseIcon: string
+      defenseText: string
+    } >
+  } >
 	yesterday: {
 		aqi: string
 		date: string

@@ -10,43 +10,56 @@ import RainFallForecast from './view/component/RainFallForecast';
 import TouchUtils from './util/TouchUtils';
 import WeatherUtils from './util/WeatherUtils';
 import LocationService from './service/LocationService';
+import LocationUtils from './util/LocationUtils';
+import Alerts from './view/component/Alerts';
 
 const weatherService = WeatherService.newInstance()
 const locationService = LocationService.newInstance()
+
+function getPosition(options?: PositionOptions): Promise<GeolocationPosition> {
+  return new Promise((resolve, reject) => 
+      navigator.geolocation.getCurrentPosition(resolve, reject, options)
+  );
+}
 
 function App() {
   const [weather, setWeather] = useState<Weather | null>(null)
   const [address, setAddress] = useState('')
   const [loading, setLoading] = useState(true)
-  const [longtitude, setLongtitude] = useState('118.636286')
-  const [latitude, setLatitude] = useState('24.874194')
 
   const [messageApi, contextHolder] = message.useMessage();
 
-  navigator.geolocation.getCurrentPosition((pos) => {
-    setLongtitude(pos.coords.longitude + '')
-    setLatitude(pos.coords.latitude + '')
-  }, (err) => {
-    messageApi.error(err.message)
-  })
+  const getLocation = async (): Promise<[number, number]> => {
+    try {
+      const pos = await getPosition()
+      const coord = LocationUtils.wgs84togcj02(pos.coords.longitude, pos.coords.latitude)
+      return [coord[0], coord[1]]
+    }catch(e) {
+      messageApi.error((e as GeolocationPositionError).message)
+    }
+    return [118.636286,24.874194]
+  }
+
+  // getLocation()
 
   const updateBackground = (weat: Weather) => {
     const color = WeatherUtils.weatherCode2Color(weat.current.weather)
     document.querySelector('html')!.style.background = `linear-gradient(135deg, ${color[0]}, ${color[1]})`
   }
 
-  const refreshAddress = async () => {
-    setAddress(await locationService.location2Address(longtitude,latitude))
+  const refreshAddress = async (lon: string, lat: string) => {
+    setAddress(await locationService.location2Address(lon,lat))
   }
 
-  const refresh = function () {
-    refreshAddress()
-    setLoading(true)
-    weatherService.getWeather(longtitude, latitude).then(weat => {
+  const refresh = async () => {
+    const coord = await getLocation()
+    weatherService.getWeather(coord[0] + '', coord[1] + '').then(weat => {
       setWeather(weat)
       updateBackground(weat)
       setLoading(false)
     })
+    refreshAddress(coord[0] + '', coord[1] + '')
+    setLoading(true)
   }
   useEffect(() => {
     if (!weather) {
@@ -67,6 +80,7 @@ function App() {
         <Row>
           <Col span={24}>
             <p>推送时间: {weather?.current.pubTime}</p>
+            <Alerts weather={weather}/>
           </Col>
           <Col md={8} xs={24}>
             <TodaySummary weather={weather} />
@@ -88,7 +102,7 @@ function App() {
   return (
     <div className="App" id="app">
       {contextHolder}
-      <div>{address} | {longtitude},{latitude}</div>
+      <div>{address}</div>
       {template()}
     </div>
   );
