@@ -13,6 +13,7 @@ import LocationService from './service/LocationService';
 import LocationUtils from './util/LocationUtils';
 import Alerts from './view/component/Alerts';
 import Map from './view/component/Map';
+import { AxiosError } from 'axios';
 
 const weatherService = WeatherService.newInstance()
 const locationService = LocationService.newInstance()
@@ -38,7 +39,7 @@ function App() {
       setLocation([coord[0], coord[1]])
       return [coord[0], coord[1]]
     }catch(e) {
-      messageApi.error((e as GeolocationPositionError).message)
+      messageApi.error("请求定位服务失败:" + (e as GeolocationPositionError).message)
     }
     return [118.636286,24.874194]
   }
@@ -56,6 +57,17 @@ function App() {
   const refresh = async () => {
     const coord = await getLocation()
     weatherService.getWeather(coord[0] + '', coord[1] + '').then(weat => {
+      setWeather(weat)
+      updateBackground(weat)
+      setLoading(false)
+    }).catch((err: AxiosError) => {
+      messageApi.error("请求天气接口失败:" + err.message)
+      // 使用上一次数据
+      const weat = weatherService.getLastWeather()
+      if (!weat) {
+        messageApi.error("没有可用天气数据")
+        return
+      }
       setWeather(weat)
       updateBackground(weat)
       setLoading(false)

@@ -9,7 +9,7 @@ import HourlyWeatherRangeItem from "../dto/HourlyWeatherRangeItem";
 export default class WeatherService {
   private static instance: WeatherService
 
-  private constructor() {}
+  private constructor() { }
 
   public static newInstance(): WeatherService {
     return this.instance || (this.instance = new WeatherService())
@@ -18,7 +18,23 @@ export default class WeatherService {
   public async getWeather(longtitude: string, latitude: string): Promise<Weather> {
     const resp = await axios.get(`https://weather-api.ismy.wang/wtr-v3/weather/all?longitude=${longtitude}&latitude=${latitude}&locale=zh_cn&isGlobal=false&appKey=weather20151024&sign=zUFJoAR2ZVrDy1vF3D07`)
     const weather = resp.data as Weather
+    localStorage.setItem("last-weather", JSON.stringify(weather))
     return weather
+  }
+
+
+  /**
+   *
+   * 获取最后一次可用的天气
+   * @return {*}  {Weather}
+   * @memberof WeatherService
+   */
+  public getLastWeather(): Weather | null {
+    const json = localStorage.getItem("last-weather")
+    if (!json) {
+      return null
+    }
+    return JSON.parse(json) as Weather
   }
 
   public getDailyForecast(weather: Weather | null): DailyForecastItem[] {
@@ -37,7 +53,7 @@ export default class WeatherService {
     })
   }
 
-  public getHourlyForecast(weather: Weather | null) : HourlyForecastItem[] {
+  public getHourlyForecast(weather: Weather | null): HourlyForecastItem[] {
     if (!weather) {
       return []
     }
@@ -55,12 +71,12 @@ export default class WeatherService {
     const result: HourlyWeatherRangeItem[] = []
     const colors = ['rgba(255, 173, 177, 0.4)', 'rgba(125, 137, 177, 0.4)']
     let cnt = 0
-    for(let f of forecast) {
+    for (let f of forecast) {
       if (result.length === 0 || result[result.length - 1].weather !== f.weather) {
         if (result.length !== 0) {
-          result[result.length - 1].endTime = f.time  
+          result[result.length - 1].endTime = f.time
         }
-        result.push({weather: f.weather, startTime: f.time, endTime: dayjs(f.time).add(1, 'hour').format("HH:mm"), color: colors[(cnt++ % 2)]})
+        result.push({ weather: f.weather, startTime: f.time, endTime: dayjs(f.time).add(1, 'hour').format("HH:mm"), color: colors[(cnt++ % 2)] })
       } else {
         result[result.length - 1].endTime = f.time
       }
