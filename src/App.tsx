@@ -46,6 +46,7 @@ function App() {
   const updateBackground = (weat: Weather) => {
     const color = WeatherUtils.weatherCode2Color(weat.current.weather)
     document.querySelector('html')!.style.background = `linear-gradient(135deg, ${color[0]}, ${color[1]})`
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", color[0])
   }
 
   const refreshAddress = async (lon: string, lat: string) => {
