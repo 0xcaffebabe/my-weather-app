@@ -29,9 +29,11 @@ function App() {
   const [address, setAddress] = useState('')
   const [loading, setLoading] = useState(true)
   const [location, setLocation] = useState<[number,number]>([118.636286,24.874194])
+  const [showRefreshTip, setShowRefreshTip] = useState(false)
 
   const [messageApi, contextHolder] = message.useMessage();
 
+  /* 获取当前经纬度 */
   const getLocation = async (): Promise<[number, number]> => {
     try {
       const pos = await getPosition()
@@ -44,16 +46,19 @@ function App() {
     return [118.636286,24.874194]
   }
 
+  /* 根据天气更新背景色 */
   const updateBackground = (weat: Weather) => {
     const color = WeatherUtils.weatherCode2Color(weat.current.weather)
     document.querySelector('html')!.style.background = `linear-gradient(135deg, ${color[0]}, ${color[1]})`
     document.querySelector('meta[name="theme-color"]')?.setAttribute("content", color[0])
   }
 
+  /* 根据经纬度更新地址 */
   const refreshAddress = async (lon: string, lat: string) => {
     setAddress(await locationService.location2Address(lon,lat))
   }
 
+  /* 整体刷新逻辑 */
   const refresh = async () => {
     const coord = await getLocation()
     weatherService.getWeather(coord[0] + '', coord[1] + '').then(weat => {
@@ -75,11 +80,17 @@ function App() {
     refreshAddress(coord[0] + '', coord[1] + '')
     setLoading(true)
   }
+
   useEffect(() => {
     if (!weather) {
       TouchUtils.onSwipe(document.getElementById('app')!, (dir, del) => {
         if (dir[1] === 'down' && del[1] >= 350) {
           refresh()
+          setShowRefreshTip(false)
+        }
+      }, (dir, del) => {
+        if (dir[1] === 'down' && del[1] >= 350) {
+          setShowRefreshTip(true)
         }
       })
       refresh()
@@ -113,13 +124,19 @@ function App() {
     }
   }
 
+  const refreshTipTemplate = () => {
+    if (showRefreshTip) {
+      return <div style={{fontSize: '12px'}}><Spin tip="" size='small'></Spin> 松开以刷新</div>
+    }
+  }
+
   return (
     <div className="App" id="app">
       {contextHolder}
       <Popover content={(<Map location={location}/>)}>
+        {refreshTipTemplate()}
         <div>{address}</div>
       </Popover>
-      
       {template()}
     </div>
   );
