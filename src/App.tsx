@@ -135,7 +135,7 @@ function App() {
       {contextHolder}
       <Popover content={(<Map location={location}/>)}>
         {refreshTipTemplate()}
-        <div>{address}</div>
+        <div>地点: {address || '未知'}</div>
       </Popover>
       {template()}
     </div>
