@@ -119,6 +119,13 @@ function App() {
           <Col span={24}>
             <HourlyForecast weather={weather} />
           </Col>
+          <Col span={24}>
+            <div className="block">
+              <p className="words">
+                爱哭寶爱小美
+              </p>
+            </div>
+          </Col>
         </Row>
       )
     }
