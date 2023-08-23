@@ -122,7 +122,7 @@ function App() {
           <Col span={24}>
             <div className="block">
               <p className="words">
-                爱哭寶爱小美
+                爱哭寶爱小盈
               </p>
             </div>
           </Col>
