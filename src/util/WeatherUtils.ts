@@ -224,8 +224,10 @@ function windDegree2ReableDirection(degrees: number) {
 }
 
 
-export default {
+const exportedObject =  {
   weatherCode2Str,
   weatherCode2Color,
   windDegree2ReableDirection
 }
+
+export default exportedObject

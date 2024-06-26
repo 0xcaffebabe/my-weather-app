@@ -18,7 +18,7 @@ const onSwipe = (elm: HTMLElement, doneCallback: (direction: ['right' | 'left', 
     doneCallback([deltaX > 0 ? 'right' : 'left', deltaY > 0 ? 'down' : 'up'], [Math.abs(deltaX), Math.abs(deltaY)])
   })
 }
-
-export default {
+const exportedObject = {
   onSwipe
 }
+export default exportedObject
