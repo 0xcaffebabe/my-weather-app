@@ -95,7 +95,7 @@ function App() {
       })
       refresh()
     }
-  })
+  }, [])
 
   const template = () => {
     if (loading) {
