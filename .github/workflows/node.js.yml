@@ -1,4 +1,4 @@
-name: buildbook
+name: build
 
 on:
   push:
