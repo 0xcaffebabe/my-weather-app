@@ -1,48 +1,91 @@
 import axios from "axios"
 
-interface StreetNumber {
-	number: string;
-	location: string;
-	direction: string;
-	distance: string;
-	street: string;
+export interface LocationResult {
+  status: number
+  message: string
+  request_id: string
+  result: Result
 }
 
-interface Building {
-	name: any[];
-	type: any[];
+export interface Result {
+  location: Location
+  address: string
+  address_component: AddressComponent
+  ad_info: AdInfo
+  address_reference: AddressReference
+  formatted_addresses: FormattedAddresses
 }
 
-interface Neighborhood {
-	name: any[];
-	type: any[];
+export interface Location {
+  lat: number
+  lng: number
 }
 
-interface AddressComponent {
-	city: string;
-	province: string;
-	adcode: string;
-	district: string;
-	towncode: string;
-	streetNumber: StreetNumber;
-	country: string;
-	township: string;
-	building: Building;
-	neighborhood: Neighborhood;
-	citycode: string;
+export interface AddressComponent {
+  nation: string
+  province: string
+  city: string
+  district: string
+  street: string
+  street_number: string
 }
 
-interface Regeocode {
-	addressComponent: AddressComponent;
-	formatted_address: string;
+export interface AdInfo {
+  nation_code: string
+  adcode: string
+  phone_area_code: string
+  city_code: string
+  name: string
+  location: Location2
+  nation: string
+  province: string
+  city: string
+  district: string
+  _distance: number
 }
 
-interface LocationResult {
-	status: string;
-	regeocode: Regeocode;
-	info: string;
-	infocode: string;
+export interface Location2 {
+  lat: number
+  lng: number
 }
+
+export interface AddressReference {
+  town: Town
+  landmark_l2: LandmarkL2
+}
+
+export interface Town {
+  id: string
+  title: string
+  location: Location3
+  _distance: number
+  _dir_desc: string
+}
+
+export interface Location3 {
+  lat: number
+  lng: number
+}
+
+export interface LandmarkL2 {
+  id: string
+  title: string
+  location: Location4
+  _distance: number
+  _dir_desc: string
+}
+
+export interface Location4 {
+  lat: number
+  lng: number
+}
+
+export interface FormattedAddresses {
+  recommend: string
+  rough: string
+  standard_address: string
+}
+
 
 export default class LocationService {
 
@@ -60,16 +103,12 @@ export default class LocationService {
 		if (this.cache.has(key)) {
 			return this.cache.get(key)!
 		}
-		const resp = await axios.get(`https://restapi.amap.com/v3/geocode/regeo?key=696d4de11b128b12bac4eeacc6d97fbc&location=${longtitude},${latitude}`)
-		const result = resp.data as LocationResult
-		let address = result.regeocode.formatted_address
-		if (result.regeocode.formatted_address.length === 0) {
+		const resp = await axios.get(`https://lbs.ismy.wang/ws/geocoder/v1?location=${latitude},${longtitude}&get_poi=0&key=OA4BZ-FX43U-E5VV2-45M6S-C4HD3-NIFFI&output=json`)
+		const data = resp.data as LocationResult
+		let address = data.result.formatted_addresses.recommend
+		if (!address) {
 			address = '未知'
 		}
-		address = address
-			.replace(result.regeocode.addressComponent.province, '')
-			.replace(result.regeocode.addressComponent.city, '')
-			.replace(result.regeocode.addressComponent.district, '')
 		this.cache.set(key, address)
 		return address
 	}
