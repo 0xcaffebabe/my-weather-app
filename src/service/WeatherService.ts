@@ -69,7 +69,7 @@ export default class WeatherService {
 
   public calcHourlyWeahterRange(forecast: HourlyForecastItem[]): HourlyWeatherRangeItem[] {
     const result: HourlyWeatherRangeItem[] = []
-    const colors = ['rgba(255, 173, 177, 0.4)', 'rgba(125, 137, 177, 0.4)']
+    const colors = ['rgba(41, 42, 43, 0.2)', 'rgba(173, 173, 177, 0.4)']
     let cnt = 0
     for (let f of forecast) {
       if (result.length === 0 || result[result.length - 1].weather !== f.weather) {
@@ -81,6 +81,7 @@ export default class WeatherService {
         result[result.length - 1].endTime = f.time
       }
     }
+    result[result.length - 1].endTime = dayjs().subtract(1, 'hour').format("HH:00")
     return result;
   }
 }

@@ -50,12 +50,13 @@ type EChartsOption = echarts.ComposeOption<
 >;
 
 const weatherService = WeatherService.newInstance()
-
+let chart: echarts.ECharts | null = null
 function initChart(weather: Weather | null) {
   const forecast = weatherService.getHourlyForecast(weather)
   var chartDom = document.getElementById('hourlyForecast')!;
-  var myChart = echarts.init(chartDom);
-
+  if (!chart) {
+    chart = echarts.init(chartDom);
+  }
   const option: EChartsOption = {
     textStyle: {
       color: '#fff'
@@ -104,13 +105,15 @@ function initChart(weather: Weather | null) {
     ]
   };
 
-  option && myChart.setOption(option);
+  option && chart.setOption(option);
 }
 
 function HourlyForecast(props: { weather: Weather | null }) {
   useEffect(() => {
-    initChart(props.weather)
-  })
+    if (props.weather) {
+      initChart(props.weather)
+    }
+  }, [props.weather])
   return (
     <div className={styles.chartWrapper}>
       <div id='hourlyForecast' className={styles.hourlyForecast}></div>
