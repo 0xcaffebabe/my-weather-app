@@ -30,27 +30,30 @@ const updateBackground = (weat: Weather) => {
   document.querySelector('meta[name="theme-color"]')?.setAttribute("content", color[0])
 }
 
+function useLocation() {
+  const [location, setLocation] = useState<[number,number]>([0,0])
+  const [messageApi] = message.useMessage();
+  useEffect(() => {
+    getPosition().then(pos => {
+      const coord = LocationUtils.wgs84togcj02(pos.coords.longitude, pos.coords.latitude)
+      setLocation([coord[0], coord[1]])
+    }).catch(e => {
+      messageApi.error("请求定位服务失败:" + (e as GeolocationPositionError).message)
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  return [location]
+}
+
 function App() {
   const [weather, setWeather] = useState<Weather | null>(null)
   const [address, setAddress] = useState('')
   const [loading, setLoading] = useState(true)
-  const [location, setLocation] = useState<[number,number]>([118.636286,24.874194])
+  const [location] = useLocation()
+  
   const [showRefreshTip, setShowRefreshTip] = useState(false)
 
   const [messageApi, contextHolder] = message.useMessage();
-
-  /* 获取当前经纬度 */
-  const getLocation = async (): Promise<[number, number]> => {
-    try {
-      const pos = await getPosition()
-      const coord = LocationUtils.wgs84togcj02(pos.coords.longitude, pos.coords.latitude)
-      setLocation([coord[0], coord[1]])
-      return [coord[0], coord[1]]
-    }catch(e) {
-      messageApi.error("请求定位服务失败:" + (e as GeolocationPositionError).message)
-    }
-    return [118.636286,24.874194]
-  }
 
   /* 根据经纬度更新地址 */
   const refreshAddress = async (lon: string, lat: string) => {
@@ -59,7 +62,10 @@ function App() {
 
   /* 整体刷新逻辑 */
   const refresh = async () => {
-    const coord = await getLocation()
+    const coord = location as [number, number]
+    if (!coord[0] && !coord[1]) {
+      return
+    }
     weatherService.getWeather(coord[0] + '', coord[1] + '').then(weat => {
       setWeather(weat)
       updateBackground(weat)
@@ -95,7 +101,7 @@ function App() {
       refresh()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [location])
 
   const template = () => {
     if (loading) {
