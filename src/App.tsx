@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import Weather from './dto/Weather';
 import WeatherService from './service/WeatherService';
 import DailyForecast from './view/component/DailyForecast';
 import TodaySummary from './view/component/TodaySummary';
-import { Row, Col, Spin,message, Popover  } from 'antd'
+import { Row, Col, Spin,message } from 'antd'
 import HourlyForecast from './view/component/HourlyForecast';
 import RainFallForecast from './view/component/RainFallForecast';
 import TouchUtils from './util/TouchUtils';
@@ -12,7 +12,6 @@ import WeatherUtils from './util/WeatherUtils';
 import LocationService from './service/LocationService';
 import LocationUtils from './util/LocationUtils';
 import Alerts from './view/component/Alerts';
-import Map from './view/component/Map';
 import { AxiosError } from 'axios';
 
 const weatherService = WeatherService.newInstance()
@@ -141,10 +140,10 @@ function App() {
   return (
     <div className="App" id="app">
       {contextHolder}
-      <Popover content={(<Map location={location}/>)}>
+      <div>
         {refreshTipTemplate()}
         <div>地点: {address || '未知'}</div>
-      </Popover>
+      </div>
       {template()}
     </div>
   );
