@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import './App.css';
 import Weather from './dto/Weather';
 import WeatherService from './service/WeatherService';
@@ -23,6 +23,13 @@ function getPosition(options?: PositionOptions): Promise<GeolocationPosition> {
   );
 }
 
+/* 根据天气更新背景色 */
+const updateBackground = (weat: Weather) => {
+  const color = WeatherUtils.weatherCode2Color(weat.current.weather)
+  document.querySelector('html')!.style.background = `linear-gradient(135deg, ${color[0]}, ${color[1]})`
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", color[0])
+}
+
 function App() {
   const [weather, setWeather] = useState<Weather | null>(null)
   const [address, setAddress] = useState('')
@@ -43,13 +50,6 @@ function App() {
       messageApi.error("请求定位服务失败:" + (e as GeolocationPositionError).message)
     }
     return [118.636286,24.874194]
-  }
-
-  /* 根据天气更新背景色 */
-  const updateBackground = (weat: Weather) => {
-    const color = WeatherUtils.weatherCode2Color(weat.current.weather)
-    document.querySelector('html')!.style.background = `linear-gradient(135deg, ${color[0]}, ${color[1]})`
-    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", color[0])
   }
 
   /* 根据经纬度更新地址 */
