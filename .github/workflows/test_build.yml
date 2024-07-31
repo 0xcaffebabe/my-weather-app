@@ -1,0 +1,30 @@
+name: build
+
+on:
+  push:
+    branches: [ '**', '!main', '!gh-pages' ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: '0'
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: 安装依赖
+      run: |
+        npm install
+    - name: 打包
+      run: |
+        npm run build
