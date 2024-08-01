@@ -46,7 +46,7 @@ function useLocation() {
 }
 
 function App() {
-  const [weather, setWeather] = useState<Weather | null>(null)
+  const [weather, setWeather] = useState<Weather | null>(weatherService.getLastWeather())
   const [address, setAddress] = useState('')
   const [loading, setLoading] = useState(false)
   const [location] = useLocation()
