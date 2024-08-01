@@ -61,7 +61,7 @@ function App() {
   }
 
   /* 整体刷新逻辑 */
-  const refresh = async (firstLoad: boolean = false) => {
+  const refresh = async () => {
     const coord = location as [number, number]
     if (!coord[0] && !coord[1]) {
       return
@@ -83,8 +83,6 @@ function App() {
       setLoading(false)
     })
     refreshAddress(coord[0] + '', coord[1] + '')
-    if (!firstLoad) {
-    }
     setLoading(true)
   }
 
@@ -103,10 +101,10 @@ function App() {
       refresh()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location])
+  }, [])
 
   useEffect(() => {
-    refresh(true)
+    refresh()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
