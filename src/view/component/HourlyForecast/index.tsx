@@ -54,8 +54,8 @@ let chart: echarts.ECharts | null = null
 function initChart(weather: Weather | null) {
   const forecast = weatherService.getHourlyForecast(weather)
   var chartDom = document.getElementById('hourlyForecast')!;
+  chart = echarts.init(chartDom);
   if (!chart) {
-    chart = echarts.init(chartDom);
   }
   const option: EChartsOption = {
     textStyle: {

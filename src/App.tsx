@@ -31,7 +31,7 @@ const updateBackground = (weat: Weather) => {
 }
 
 function useLocation() {
-  const [location, setLocation] = useState<[number,number]>([0,0])
+  const [location, setLocation] = useState<[number,number]>([118.0248,24.6279])
   const [messageApi] = message.useMessage();
   useEffect(() => {
     getPosition().then(pos => {
@@ -48,7 +48,7 @@ function useLocation() {
 function App() {
   const [weather, setWeather] = useState<Weather | null>(null)
   const [address, setAddress] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [location] = useLocation()
   
   const [showRefreshTip, setShowRefreshTip] = useState(false)
@@ -61,7 +61,7 @@ function App() {
   }
 
   /* 整体刷新逻辑 */
-  const refresh = async () => {
+  const refresh = async (firstLoad: boolean = false) => {
     const coord = location as [number, number]
     if (!coord[0] && !coord[1]) {
       return
@@ -83,6 +83,8 @@ function App() {
       setLoading(false)
     })
     refreshAddress(coord[0] + '', coord[1] + '')
+    if (!firstLoad) {
+    }
     setLoading(true)
   }
 
@@ -103,38 +105,39 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
+  useEffect(() => {
+    refresh(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location])
+
   const template = () => {
-    if (loading) {
-      return (<Spin style={{ color: '#fff', position: 'fixed', left: 'calc(50% - 1vh)', top: 'calc(50% - 1vh)' }} tip="刷新中" size='large'></Spin>)
-    } else {
-      return (
-        <Row>
-          <Col span={24}>
-            <p>推送时间: {weather?.current.pubTime}</p>
-            <Alerts weather={weather}/>
-          </Col>
-          <Col md={8} xs={24}>
-            <TodaySummary weather={weather} />
-          </Col>
-          <Col md={16} xs={24}>
-            <DailyForecast weather={weather} />
-          </Col>
-          <Col span={24}>
-            <RainFallForecast weather={weather} location={location} />
-          </Col>
-          <Col span={24}>
-            <HourlyForecast weather={weather} />
-          </Col>
-          <Col span={24}>
-            <div className="block">
-              <p className="words">
-                爱哭寶爱小盈
-              </p>
-            </div>
-          </Col>
-        </Row>
-      )
-    }
+    return (
+      <Row>
+        <Col span={24}>
+          <p>推送时间: {weather?.current.pubTime}</p>
+          <Alerts weather={weather}/>
+        </Col>
+        <Col md={8} xs={24}>
+          <TodaySummary weather={weather} />
+        </Col>
+        <Col md={16} xs={24}>
+          <DailyForecast weather={weather} />
+        </Col>
+        <Col span={24}>
+          <RainFallForecast weather={weather} location={location} />
+        </Col>
+        <Col span={24}>
+          <HourlyForecast weather={weather} />
+        </Col>
+        <Col span={24}>
+          <div className="block">
+            <p className="words">
+              爱哭寶爱小盈
+            </p>
+          </div>
+        </Col>
+      </Row>
+    )
   }
 
   const refreshTipTemplate = () => {
@@ -148,7 +151,7 @@ function App() {
       {contextHolder}
       <div>
         {refreshTipTemplate()}
-        <div>地点: {address || '未知'}</div>
+        <div>地点: {address || '未知'} <span style={{fontSize: '12px'}}>{loading && (<Spin style={{ color: '#fff' }} tip="" size='small'></Spin>)}</span> </div>
       </div>
       {template()}
     </div>
