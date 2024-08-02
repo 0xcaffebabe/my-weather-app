@@ -30,26 +30,29 @@ const updateBackground = (weat: Weather) => {
   document.querySelector('meta[name="theme-color"]')?.setAttribute("content", color[0])
 }
 
-function useLocation() {
-  const [location, setLocation] = useState<[number,number]>([118.0248,24.6279])
+function useLocation(): [[number,number], (loc: [number,number]) => void] {
+  const [location, setLocation] = useState<[number,number]>(LocationUtils.getLastLocation())
   const [messageApi] = message.useMessage();
   useEffect(() => {
     getPosition().then(pos => {
       const coord = LocationUtils.wgs84togcj02(pos.coords.longitude, pos.coords.latitude)
-      setLocation([coord[0], coord[1]])
+      if (coord[0] !== location[0] || coord[1] !== location[1]) {
+        setLocation([coord[0], coord[1]])
+        LocationUtils.saveLastLocation(coord[0], coord[1])
+      }
     }).catch(e => {
       messageApi.error("请求定位服务失败:" + (e as GeolocationPositionError).message)
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  return [location]
+  return [location, setLocation]
 }
 
 function App() {
   const [weather, setWeather] = useState<Weather | null>(weatherService.getLastWeather())
   const [address, setAddress] = useState('')
   const [loading, setLoading] = useState(false)
-  const [location] = useLocation()
+  const [location, setLocation] = useLocation()
   
   const [showRefreshTip, setShowRefreshTip] = useState(false)
 
@@ -62,7 +65,16 @@ function App() {
 
   /* 整体刷新逻辑 */
   const refresh = async () => {
-    const coord = location as [number, number]
+    let coord = location
+    try {
+      const pos = await getPosition()
+      const coord = LocationUtils.wgs84togcj02(pos.coords.longitude, pos.coords.latitude)
+      LocationUtils.saveLastLocation(coord[0], coord[1])
+      setLocation([coord[0], coord[1]])
+    }catch(e) {
+      messageApi.error("请求定位服务失败:" + (e as GeolocationPositionError).message)
+      coord = LocationUtils.getLastLocation()
+    }
     if (!coord[0] && !coord[1]) {
       return
     }
@@ -97,16 +109,9 @@ function App() {
         setShowRefreshTip(true)
       }
     })
-    if (!weather) {
-      refresh()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
     refresh()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location])
+  }, [])
 
   const template = () => {
     return (

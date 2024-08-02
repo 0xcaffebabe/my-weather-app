@@ -50,7 +50,22 @@ function transformlng(lng: number, lat: number) {
 function out_of_china(lng: number, lat: number) {
     return (lng < 72.004 || lng > 137.8347) || ((lat < 0.8293 || lat > 55.8271) || false);
 }
+
+function saveLastLocation(lng: number, lat: number) {
+    localStorage.setItem('lastLocation', JSON.stringify([lng, lat]))
+}
+
+function getLastLocation(): [number, number] {
+    const lastLocation = localStorage.getItem('lastLocation')
+    if (lastLocation) {
+        return JSON.parse(lastLocation) as [number, number]
+    }
+    return [118.0248,24.6279]
+}
+
 const expotedObject = {
-    wgs84togcj02
+    wgs84togcj02,
+    saveLastLocation,
+    getLastLocation
 }
 export default expotedObject
