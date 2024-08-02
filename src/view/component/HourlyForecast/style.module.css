@@ -1,11 +1,10 @@
 .chartWrapper {
   width: 100%;
   overflow-x: auto;
-  padding: 0 1rem;
 }
 .hourlyForecast {
-  width: max(100%, 84rem);
+  width: max(100%, 800px);
   /* padding-left: 20px;
   padding-right: 20px; */
-  height: min(60vh, 6rem);
+  height: min(60vh, 600px);
 }

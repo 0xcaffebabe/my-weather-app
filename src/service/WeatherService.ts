@@ -59,19 +59,14 @@ export default class WeatherService {
     if (!weather) {
       return []
     }
-    // 插入当前天气
-    return [{
-      time: '现在',
-      weather: WeatherUtils.weatherCode2Str(weather.current.weather + ''),
-      temp: weather.current.temperature.value
-    },...weather.forecastHourly
+    return weather.forecastHourly
       .weather.value.map((_, i) => {
         return {
           time: dayjs().set("minute", 0).add(i + 1, 'hour').format("HH:mm"),
           weather: WeatherUtils.weatherCode2Str(weather.forecastHourly.weather.value[i] + ''),
           temp: weather.forecastHourly.temperature.value[i] + '',
         } as HourlyForecastItem
-      })]
+      })
   }
 
   public calcHourlyWeahterRange(forecast: HourlyForecastItem[]): HourlyWeatherRangeItem[] {
