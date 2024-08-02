@@ -113,6 +113,12 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    if (weather) {
+      updateBackground(weather)
+    }
+  }, [weather])
+
   const template = () => {
     return (
       <Row>
