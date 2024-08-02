@@ -3,7 +3,6 @@ import Weather from "../../../dto/Weather";
 import WeatherService from "../../../service/WeatherService";
 import styles from './style.module.css'
 import weatherUtils from '../../../util/WeatherUtils'
-import dayjs from 'dayjs'
 
 const weatherService = WeatherService.newInstance()
 
