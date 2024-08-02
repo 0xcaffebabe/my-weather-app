@@ -7,7 +7,7 @@ export default function Alerts(props: {weather: Weather | null}) {
     return (
       <div style={{padding: '10px'}}>
         {alerts.map(v => (
-          <Popover content={(<div> {v.detail}</div>)} title={v.title} trigger="click">
+          <Popover content={(<div> {v.detail}</div>)} title={v.title} trigger="click" key={v.alertId}>
             <Alert message={v.title} type='warning' showIcon />
           </Popover>
         ))}

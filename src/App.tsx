@@ -26,7 +26,7 @@ function getPosition(options?: PositionOptions): Promise<GeolocationPosition> {
 /* 根据天气更新背景色 */
 const updateBackground = (weat: Weather) => {
   const color = WeatherUtils.weatherCode2Color(weat.current.weather)
-  document.querySelector('html')!.style.background = `linear-gradient(135deg, ${color[0]}, ${color[1]})`
+  document.querySelector('html')!.style.background = `${color[0]}`
   document.querySelector('meta[name="theme-color"]')?.setAttribute("content", color[0])
 }
 
@@ -87,17 +87,17 @@ function App() {
   }
 
   useEffect(() => {
+    TouchUtils.onSwipe(document.getElementById('app')!, (dir, del) => {
+      if (dir[1] === 'down' && del[1] >= 350) {
+        refresh()
+        setShowRefreshTip(false)
+      }
+    }, (dir, del) => {
+      if (dir[1] === 'down' && del[1] >= 350) {
+        setShowRefreshTip(true)
+      }
+    })
     if (!weather) {
-      TouchUtils.onSwipe(document.getElementById('app')!, (dir, del) => {
-        if (dir[1] === 'down' && del[1] >= 350) {
-          refresh()
-          setShowRefreshTip(false)
-        }
-      }, (dir, del) => {
-        if (dir[1] === 'down' && del[1] >= 350) {
-          setShowRefreshTip(true)
-        }
-      })
       refresh()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
