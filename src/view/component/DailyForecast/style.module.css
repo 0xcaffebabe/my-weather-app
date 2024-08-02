@@ -2,7 +2,7 @@
 .dailyForecast {
   max-height: 240px;
   overflow-y: scroll;
-  margin: 0 auto;
+  /* margin: 0 auto; */
   font-size: 24px;
 }
 .dailyForecast > div {

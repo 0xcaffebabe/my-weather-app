@@ -3,6 +3,7 @@ import Weather from "../../../dto/Weather";
 import WeatherService from "../../../service/WeatherService";
 import styles from './style.module.css'
 import weatherUtils from '../../../util/WeatherUtils'
+import dayjs from 'dayjs'
 
 const weatherService = WeatherService.newInstance()
 
@@ -29,10 +30,10 @@ function DailyForecast(props: { weather: Weather | null }) {
               <span style={{ margin: '0 0.5rem' }}>/</span>
               <span dangerouslySetInnerHTML={{ __html: weatherUtils.imgData[v.weatherTo] }}></span>
             </Col>
-            <Col span={8} style={{ fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span>{v.tempFrom}℃</span>
+            <Col span={8} style={{ fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span>{v.tempTo}°</span>
               <span style={{ margin: '0 0.2rem' }}>~</span>
-              <span>{v.tempTo}℃</span>
+              <span>{v.tempFrom}°</span>
             </Col>
           </Row>
         ))}

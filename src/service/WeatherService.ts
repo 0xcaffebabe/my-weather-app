@@ -6,6 +6,8 @@ import dayjs from 'dayjs'
 import HourlyForecastItem from "../dto/HourlyForecastItem";
 import HourlyWeatherRangeItem from "../dto/HourlyWeatherRangeItem";
 
+const dayNames = ['日', '一', '二', '三', '四', '五', '六']
+
 export default class WeatherService {
   private static instance: WeatherService
 
@@ -44,7 +46,7 @@ export default class WeatherService {
     const forecast = weather.forecastDaily
     return forecast.weather.value.map((_, i) => {
       return {
-        date: dayjs().add(i, 'day').format("MM-DD"),
+        date: dayjs().add(i, 'day').format("MM-DD") + `(周${dayNames[dayjs().add(i, 'day').day()]})`,
         weatherFrom: WeatherUtils.weatherCode2Str(forecast.weather.value[i].from),
         weatherTo: WeatherUtils.weatherCode2Str(forecast.weather.value[i].to),
         tempFrom: forecast.temperature.value[i].from,
