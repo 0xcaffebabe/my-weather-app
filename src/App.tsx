@@ -68,7 +68,7 @@ function App() {
     let coord = location
     try {
       const pos = await getPosition()
-      const coord = LocationUtils.wgs84togcj02(pos.coords.longitude, pos.coords.latitude)
+      coord = LocationUtils.wgs84togcj02(pos.coords.longitude, pos.coords.latitude) as [number, number]
       LocationUtils.saveLastLocation(coord[0], coord[1])
       setLocation([coord[0], coord[1]])
     }catch(e) {
