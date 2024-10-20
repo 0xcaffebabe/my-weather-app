@@ -12,7 +12,12 @@ function TodaySummary(props: { weather: Weather | null }) {
         <span style={{ verticalAlign: 'middle' }} dangerouslySetInnerHTML={{__html: weatherUtils.imgData[weatherStr].replace('width="32" height="32"', 'width="24" height="24"')}}></span>
         <span style={{ verticalAlign: 'middle' }}></span>{weatherStr}
       </div>
-      <p>湿度: {props.weather?.current.humidity.value}% | 体感：{props.weather?.current.feelsLike.value}℃ | {WeatherUtils.windDegree2ReableDirection(parseFloat(props.weather?.current.wind.direction.value || '0'))} {(parseFloat(props.weather?.current.wind.speed.value || '0') * 1000 / 3600).toFixed(2)} m/s</p>
+      <p>湿度: {props.weather?.current.humidity.value}% | 
+         体感：{props.weather?.current.feelsLike.value}℃ | 
+         {WeatherUtils.windDegree2ReableDirection(parseFloat(props.weather?.current.wind.direction.value || '0'))} 
+         {(parseFloat(props.weather?.current.wind.speed.value || '0') * 1000 / 3600).toFixed(2)} m/s
+         ({weatherUtils.windSpeed2Level(parseFloat(props.weather?.current.wind.speed.value || '0') * 1000 / 3600)}级风)
+         </p>
     </div>
   )
 }

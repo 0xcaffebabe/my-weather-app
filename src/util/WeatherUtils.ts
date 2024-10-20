@@ -181,6 +181,23 @@ function weatherCode2Color(code: string | number): [string, string] {
   return ['#197fd6', '#6da6e4']
 }
 
+
+function windSpeed2Level(speed: number):number {
+  // 风速 m/s
+  if (speed < 0.3) return 0; // 0级
+  if (speed < 1.6) return 1; // 1级
+  if (speed < 3.4) return 2; // 2级
+  if (speed < 5.4) return 3; // 3级
+  if (speed < 8.0) return 4; // 4级
+  if (speed < 10.7) return 5; // 5级
+  if (speed < 13.9) return 6; // 6级
+  if (speed < 17.2) return 7; // 7级
+  if (speed < 20.8) return 8; // 8级
+  if (speed < 24.5) return 9; // 9级
+  if (speed < 28.4) return 10; // 10级
+  return 11; // 11级及以上
+}
+
 function windDegree2ReableDirection(degrees: number) {
   let index = 0;
   if (348.75 <= degrees && degrees <= 360) {
@@ -244,7 +261,8 @@ const exportedObject =  {
   weatherCode2Str,
   weatherCode2Color,
   windDegree2ReableDirection,
-  imgData
+  imgData,
+  windSpeed2Level,
 }
 
 export default exportedObject
