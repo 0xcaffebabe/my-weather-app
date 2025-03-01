@@ -105,7 +105,7 @@ export default class LocationService {
 		}
 		const resp = await axios.get(`https://lbs.ismy.wang/ws/geocoder/v1?location=${latitude},${longtitude}&get_poi=0&key=OA4BZ-FX43U-E5VV2-45M6S-C4HD3-NIFFI&output=json`)
 		const data = resp.data as LocationResult
-		let address = data.result.formatted_addresses.recommend
+		let address = data.result.formatted_addresses?.recommend
 		if (!address) {
 			address = '未知'
 		}
