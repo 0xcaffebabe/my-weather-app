@@ -60,7 +60,7 @@ function getLastLocation(): [number, number] {
     if (lastLocation) {
         return JSON.parse(lastLocation) as [number, number]
     }
-    return [118.0248,24.6279]
+    return [114.0436,22.6292]
 }
 
 const expotedObject = {
